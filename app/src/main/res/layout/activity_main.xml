@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <com.jjoe64.graphview.GraphView
+        android:id="@+id/s"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/start"
+        app:layout_constraintBottom_toTopOf="@id/dimension"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
+
     <Button
         android:id="@+id/start"
         android:layout_width="0dp"

@@ -1,9 +1,12 @@
 package com.example.sir_model
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.jjoe64.graphview.series.DataPoint
+import com.jjoe64.graphview.series.LineGraphSeries
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.random.Random
 
@@ -12,11 +15,16 @@ class MainActivity : AppCompatActivity() {
     var drr: Int = 0
     var dim: Int = 10
     var epidemic = true
+    private var time = 0
+    private var r = 0
     private var length = 0
     private var bet: Float = 0f
     private var gam: Float = 0f
     private var pop: Int = 0
     private var flag = true
+    private var svalues: ArrayList<DataPoint> = ArrayList()
+    private var rvalues: ArrayList<DataPoint> = ArrayList()
+    private var ivalues: ArrayList<DataPoint> = ArrayList()
 
     var list: ArrayList<Triple<Int, Int, Int>> = ArrayList()
 
@@ -29,6 +37,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         instance = this
+        s.visibility = View.GONE
+        s.viewport.setScrollableY(true)
     }
 
     fun start(view: View) {
@@ -49,6 +59,14 @@ class MainActivity : AppCompatActivity() {
         list = ArrayList()
         epidemic = true
         length = 0
+        r = 0
+        time = 0
+        s.removeAllSeries()
+        s.visibility = View.GONE
+        board.visibility = View.VISIBLE
+        svalues = ArrayList()
+        rvalues = ArrayList()
+        ivalues = ArrayList()
     }
 
     fun pause(view: View) {
@@ -80,6 +98,9 @@ class MainActivity : AppCompatActivity() {
         if (pop / 20 > cnt) {
             cnt = pop / 20
         }
+        ivalues.add(DataPoint(0.0, cnt.toDouble()))
+        svalues.add(DataPoint(0.0, pop - cnt.toDouble()))
+        rvalues.add(DataPoint(0.0, r.toDouble()))
 
         for (i in 1..cnt) {
             var current = list[0]
@@ -90,6 +111,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun move() {
+        time++
         length++
         for (i in list) {
             var time = i.third
@@ -97,6 +119,7 @@ class MainActivity : AppCompatActivity() {
                 time--
                 if (time == 0) {
                     time = -1
+                    r++
                 }
             }
             val chance = Random.nextFloat()
@@ -130,21 +153,24 @@ class MainActivity : AppCompatActivity() {
                 list[list.indexOf(i)] = Triple(i.first, i.second, time)
             }
         }
+        rvalues.add(DataPoint(time.toDouble(), r.toDouble()))
         contact()
     }
 
 
     private fun contact() {
+        val mark = Array(pop) { 0 }
         var cnt = 0
         var imm = 0
         for (i in list) {
-            if (i.third > 0) {
+            if (i.third > 0 && mark[list.indexOf(i)] == 0) {
                 cnt++
                 for (x in -1..1) {
                     for (y in -1..1) {
                         if (list.contains(Triple(i.first + x, i.second + y, 0))) {
                             list[list.indexOf(Triple(i.first + x, i.second + y, 0))] =
                                 Triple(i.first + x, i.second + y, days())
+                            mark[list.indexOf(Triple(i.first + x, i.second + y, days()))] = 1
                         }
                     }
                 }
@@ -155,11 +181,40 @@ class MainActivity : AppCompatActivity() {
                 imm++
             }
         }
+        var scnt = 0
+        var ill = 0
+        for (i in list) {
+            if (i.third == 0) {
+                scnt++
+            } else if (i.third > 0) {
+                ill++
+            }
+        }
+        svalues.add(DataPoint(time.toDouble(), scnt.toDouble()))
+        ivalues.add(DataPoint(time.toDouble(), ill.toDouble()))
 
         if (cnt == 0) {
             epidemic = false
             val sicknt = pop - imm
-            Toast.makeText(this, "Ended in $length days\n Immune - $imm \n No sick - $sicknt", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                this,
+                "Ended in $length days\n Immune - $imm \n No sick - $sicknt",
+                Toast.LENGTH_LONG
+            ).show()
+            s.visibility = View.VISIBLE
+            board.visibility = View.INVISIBLE
+            s.viewport.isXAxisBoundsManual = true
+            s.viewport.setMinX(0.0)
+            s.viewport.setMaxX(time.toDouble())
+            val sser = LineGraphSeries(svalues.toTypedArray())
+            val rser = LineGraphSeries(rvalues.toTypedArray())
+            val iser = LineGraphSeries(ivalues.toTypedArray())
+            sser.color = Color.parseColor("#00FA9A")
+            rser.color = Color.parseColor("#00BFFF")
+            iser.color = Color.parseColor("#DC143C")
+            s.addSeries(iser)
+            s.addSeries(sser)
+            s.addSeries(rser)
         }
     }
 }
