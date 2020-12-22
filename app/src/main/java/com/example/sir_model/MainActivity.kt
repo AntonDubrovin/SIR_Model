@@ -67,10 +67,29 @@ class MainActivity : AppCompatActivity() {
         svalues = ArrayList()
         rvalues = ArrayList()
         ivalues = ArrayList()
+        pause.visibility = View.VISIBLE
+        graphics.visibility = View.INVISIBLE
     }
 
     fun pause(view: View) {
         drr = 0
+    }
+
+    fun seeGraphics(view: View) {
+        s.visibility = View.VISIBLE
+        board.visibility = View.INVISIBLE
+        s.viewport.isXAxisBoundsManual = true
+        s.viewport.setMinX(0.0)
+        s.viewport.setMaxX(time.toDouble())
+        val sser = LineGraphSeries(svalues.toTypedArray())
+        val rser = LineGraphSeries(rvalues.toTypedArray())
+        val iser = LineGraphSeries(ivalues.toTypedArray())
+        sser.color = Color.parseColor("#00FA9A")
+        rser.color = Color.parseColor("#00BFFF")
+        iser.color = Color.parseColor("#DC143C")
+        s.addSeries(iser)
+        s.addSeries(sser)
+        s.addSeries(rser)
     }
 
     private fun initialize() {
@@ -201,20 +220,8 @@ class MainActivity : AppCompatActivity() {
                 "Ended in $length days\n Immune - $imm \n No sick - $sicknt",
                 Toast.LENGTH_LONG
             ).show()
-            s.visibility = View.VISIBLE
-            board.visibility = View.INVISIBLE
-            s.viewport.isXAxisBoundsManual = true
-            s.viewport.setMinX(0.0)
-            s.viewport.setMaxX(time.toDouble())
-            val sser = LineGraphSeries(svalues.toTypedArray())
-            val rser = LineGraphSeries(rvalues.toTypedArray())
-            val iser = LineGraphSeries(ivalues.toTypedArray())
-            sser.color = Color.parseColor("#00FA9A")
-            rser.color = Color.parseColor("#00BFFF")
-            iser.color = Color.parseColor("#DC143C")
-            s.addSeries(iser)
-            s.addSeries(sser)
-            s.addSeries(rser)
+            pause.visibility = View.INVISIBLE
+            graphics.visibility = View.VISIBLE
         }
     }
 }
