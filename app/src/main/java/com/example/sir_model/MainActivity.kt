@@ -42,6 +42,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun start(view: View) {
+        start.visibility = View.VISIBLE
+        resume.visibility = View.INVISIBLE
         drr = 1
         if (flag) {
             dim = dimension.text.toString().toInt()
@@ -73,6 +75,8 @@ class MainActivity : AppCompatActivity() {
 
     fun pause(view: View) {
         drr = 0
+        start.visibility = View.INVISIBLE
+        resume.visibility = View.VISIBLE
     }
 
     fun seeGraphics(view: View) {
@@ -90,6 +94,11 @@ class MainActivity : AppCompatActivity() {
         s.addSeries(iser)
         s.addSeries(sser)
         s.addSeries(rser)
+    }
+
+    fun information(view: View) {
+        board.visibility = View.INVISIBLE
+
     }
 
     private fun initialize() {
