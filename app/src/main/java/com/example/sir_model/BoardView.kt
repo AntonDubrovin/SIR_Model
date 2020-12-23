@@ -45,6 +45,14 @@ class BoardView @JvmOverloads constructor(
         style = Paint.Style.FILL
     }
 
+    private val paintGrey = Paint().apply {
+        color = Color.BLACK
+        isAntiAlias = true
+        strokeWidth = 10F
+        style = Paint.Style.FILL
+    }
+
+
     private var startTime: Long = 0
     private var currentTime: Long = 0
     private var sz = 0f
@@ -93,11 +101,14 @@ class BoardView @JvmOverloads constructor(
                     i.third == 0 -> {
                         drawCell(i.first, i.second, sz, canvas, paintGreen)
                     }
-                    i.third > 0 -> {
+                    i.third == 1 -> {
                         drawCell(i.first, i.second, sz, canvas, paintRed)
                     }
-                    else -> {
+                    i.third == -1 -> {
                         drawCell(i.first, i.second, sz, canvas, paintBlue)
+                    }
+                    else -> {
+                        drawCell(i.first, i.second, sz, canvas, paintGrey)
                     }
                 }
             }

@@ -121,4 +121,16 @@
         app:layout_constraintBottom_toTopOf="@id/gamma"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/dimension" />
+
+    <TextView
+        android:id="@+id/information"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        app:layout_constraintTop_toTopOf="@id/board"
+        app:layout_constraintBottom_toBottomOf="@id/board"
+        app:layout_constraintLeft_toLeftOf="@id/board"
+        app:layout_constraintLeft_toRightOf="@id/board"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:text="@string/information" />
 </androidx.constraintlayout.widget.ConstraintLayout>
