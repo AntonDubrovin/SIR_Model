@@ -87,7 +87,7 @@
         android:layout_height="wrap_content"
         android:autofillHints=""
         android:gravity="center"
-        android:hint="betta"
+        android:hint="beta"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/gamma"
         app:layout_constraintStart_toStartOf="parent" />
