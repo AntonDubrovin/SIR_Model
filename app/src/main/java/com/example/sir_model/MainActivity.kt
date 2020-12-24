@@ -2,7 +2,6 @@ package com.example.sir_model
 
 import android.graphics.Color
 import android.os.Bundle
-import android.os.strictmode.WebViewMethodCalledOnWrongThreadViolation
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -26,6 +25,7 @@ class MainActivity : AppCompatActivity() {
     private var svalues: ArrayList<DataPoint> = ArrayList()
     private var rvalues: ArrayList<DataPoint> = ArrayList()
     private var ivalues: ArrayList<DataPoint> = ArrayList()
+    private var cvalues: ArrayList<DataPoint> = ArrayList()
 
     var list: ArrayList<Triple<Int, Int, Int>> = ArrayList()
 
@@ -56,27 +56,27 @@ class MainActivity : AppCompatActivity() {
         drr = 1
         if (flag) {
             dim = dimension.text.toString().toInt()
-            if(dim > 40){
+            if (dim > 40) {
                 dim = 40
-            } else if (dim < 5){
+            } else if (dim < 5) {
                 dim = 5
             }
             bet = betta.text.toString().toFloat()
-            if(bet - 1.0f > 0.0000005f){
+            if (bet - 1.0f > 0.0000005f) {
                 bet = 1.0f
-            } else if (bet < 0.0f){
+            } else if (bet < 0.0f) {
                 bet = 0.00001f
             }
             gam = gamma.text.toString().toFloat()
-            if(gam - 1.0f > 0.0000005f){
+            if (gam - 1.0f > 0.0000005f) {
                 gam = 1.0f
-            } else if (gam <= 0.0f){
+            } else if (gam <= 0.0f) {
                 gam = 0.00001f
             }
             pop = population.text.toString().toInt()
-            if(pop > dim*dim){
-                pop = dim*dim
-            } else if (pop < 0){
+            if (pop > dim * dim) {
+                pop = dim * dim
+            } else if (pop < 0) {
                 pop = 1
             }
             flag = false
@@ -101,6 +101,7 @@ class MainActivity : AppCompatActivity() {
         svalues = ArrayList()
         rvalues = ArrayList()
         ivalues = ArrayList()
+        cvalues = ArrayList()
         graphics.visibility = View.INVISIBLE
     }
 
@@ -116,20 +117,19 @@ class MainActivity : AppCompatActivity() {
         s.viewport.isXAxisBoundsManual = true
         s.viewport.setMinX(0.0)
         s.viewport.setMaxX(timef.toDouble())
+        
         val sser = LineGraphSeries(svalues.toTypedArray())
         val rser = LineGraphSeries(rvalues.toTypedArray())
         val iser = LineGraphSeries(ivalues.toTypedArray())
+        val cser = LineGraphSeries(cvalues.toTypedArray())
         sser.color = Color.parseColor("#00FA9A")
         rser.color = Color.parseColor("#00BFFF")
         iser.color = Color.parseColor("#DC143C")
+        cser.color = Color.parseColor("#800080")
         s.addSeries(iser)
         s.addSeries(sser)
         s.addSeries(rser)
-    }
-
-    fun information(view: View) {
-        board.visibility = View.INVISIBLE
-
+        s.addSeries(cser)
     }
 
     private fun initialize() {
@@ -155,6 +155,7 @@ class MainActivity : AppCompatActivity() {
         ivalues.add(DataPoint(0.0, cnt.toDouble()))
         svalues.add(DataPoint(0.0, pop - cnt.toDouble()))
         rvalues.add(DataPoint(0.0, r.toDouble()))
+        cvalues.add(DataPoint(0.0, (cnt + r).toDouble()))
 
         for (i in 1..cnt) {
             var current = list[0]
@@ -176,7 +177,7 @@ class MainActivity : AppCompatActivity() {
                     var p = 0
                     val dx = Random.nextInt(0, 3) - 1
                     val dy = Random.nextInt(0, 3) - 1
-                    if (i.first + dx >= 1 && i.first + dx <= dim && i.second + dy >= 1 && i.second + dy <= dim) {
+                    if (i.first + dx in 1..dim && i.second + dy >= 1 && i.second + dy <= dim) {
                         var f = false
                         for (j in -1..1) {
                             if (list.contains(Triple(i.first + dx, i.second + dy, j))) {
@@ -228,12 +229,16 @@ class MainActivity : AppCompatActivity() {
         var scnt = 0
         var ill = 0
         for (i in list) {
-            if (i.third == 0) {
-                scnt++
-            } else if (i.third > 0) {
-                ill++
-            } else {
-                imm++
+            when {
+                i.third == 0 -> {
+                    scnt++
+                }
+                i.third > 0 -> {
+                    ill++
+                }
+                else -> {
+                    imm++
+                }
             }
         }
 
@@ -259,25 +264,30 @@ class MainActivity : AppCompatActivity() {
         scnt = 0
         ill = 0
         for (i in list) {
-            if (i.third == 0) {
-                scnt++
-            } else if (i.third > 0) {
-                ill++
-            } else {
-                imm++
+            when {
+                i.third == 0 -> {
+                    scnt++
+                }
+                i.third > 0 -> {
+                    ill++
+                }
+                else -> {
+                    imm++
+                }
             }
         }
 
         svalues.add(DataPoint(timef.toDouble(), scnt.toDouble()))
         ivalues.add(DataPoint(timef.toDouble(), ill.toDouble()))
         rvalues.add(DataPoint(timef.toDouble(), imm.toDouble()))
+        cvalues.add(DataPoint(timef.toDouble(), (ill + imm).toDouble()))
 
         if (ill == 0 || timef == 100) {
             epidemic = false
-            val sicknt = pop - imm
+            val sicknt = pop - imm - ill
             Toast.makeText(
                 this,
-                "Ended in $length days\n Immune - $imm \n No sick - $sicknt",
+                "Ended in $length days\n Immune - $imm\n Ill - $ill \n No sick - $sicknt",
                 Toast.LENGTH_LONG
             ).show()
             pause.visibility = View.INVISIBLE
