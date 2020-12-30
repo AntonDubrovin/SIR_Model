@@ -205,26 +205,6 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun contact() {
-        /*val mark = Array(pop) { 0 }
-        for (i in list) {
-            var infect = 0f
-            if (i.third > 0 && mark[list.indexOf(i)] == 0) {
-                cnt++
-                for (x in -1..1) {
-                    for (y in -1..1) {
-                        if (list.contains(Triple(i.first + x, i.second + y, 0))) {
-                            if(infect < 1f/bet) {
-                                list[list.indexOf(Triple(i.first + x, i.second + y, 0))] =
-                                    Triple(i.first + x, i.second + y, days())
-                                mark[list.indexOf(Triple(i.first + x, i.second + y, days()))] = 1
-                                infect +=1
-                            }
-                        }
-
-                    }
-                }
-            }
-        }*/
         var imm = 0
         var scnt = 0
         var ill = 0
